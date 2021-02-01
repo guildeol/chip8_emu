@@ -9,6 +9,7 @@ target_include_directories(chip8_test PUBLIC
                                             "${GOOGLETEST_DIR}/googlemock/include/gmock"
                           )
 
+
 target_link_libraries(chip8_test PUBLIC
                                        gtest
                      )
