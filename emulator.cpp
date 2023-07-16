@@ -1,7 +1,7 @@
 #include <cstdint>
 #include <cstdio>
 
-#include <chip8.h>
+#include "cpu.h"
 
 using namespace std;
 
@@ -11,7 +11,7 @@ constexpr uint8_t _argvGameFilePosition = 1;
 
 int main(int argc, char *argv[])
 {
-    Chip8 chip8;
+    Cpu chip8;
     Chip8ErrorCode_t chip8Result;
 
     if (argc != _expectedArgCount)
@@ -25,6 +25,6 @@ int main(int argc, char *argv[])
     {
         printf("ERROR: Failed to load gamefile %s\n", argv[_argvGameFilePosition]);
     }
-    
+
     return 0;
 }

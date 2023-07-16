@@ -1,11 +1,7 @@
-#include <gtest.h>
+#include "gtest/gtest.h"
+#include "gmock/gmock.h"
 
 using namespace testing;
-
-TEST(Dummy, Dummy)
-{
-    EXPECT_TRUE(true);
-}
 
 int main(int argc, char **argv) {
   InitGoogleTest(&argc, argv);
