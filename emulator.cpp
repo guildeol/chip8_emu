@@ -3,8 +3,6 @@
 
 #include "cpu.h"
 
-using namespace std;
-
 /**< Expected number of command line arguments. */
 constexpr uint8_t _expectedArgCount = 2; // Program name + game file path
 constexpr uint8_t _argvGameFilePosition = 1;

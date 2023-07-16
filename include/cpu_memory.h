@@ -18,5 +18,6 @@ public:
   /**
    * @brief Pointer to the memory region reserved for the system's work RAM.
    */
-  std::byte *const workRam = &(bank[CPU_SPEC_PROGRAM_ROM_WORK_RAM_OFFSET_B]);
+  std::byte *const workRam = &bank[CPU_SPEC_PROGRAM_ROM_WORK_RAM_OFFSET_B];
+  std::byte *const font = &bank[CPU_SPEC_FONT_MEMORY_OFFSET_B];
 };

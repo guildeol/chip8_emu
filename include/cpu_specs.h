@@ -19,7 +19,7 @@ constexpr uint16_t CPU_SPEC_INTERPRETER_MEMORY_LENGTH_B = 0x00200;
 
 /**
  * @brief Memory offset of the built-in pixel font in the emulator's memory bank.
- * 
+ *
  * @note This is located inside the interpreter memory region.
  */
 constexpr uint16_t CPU_SPEC_FONT_MEMORY_OFFSET_B = 0x0050;
