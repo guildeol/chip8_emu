@@ -1,8 +1,15 @@
 #pragma once
 
-#include <cstddef>
+#include <array>
 
 #include "cpu_specs.h"
+
+typedef struct CpuMemoryRegion_s
+{
+  std::byte * const start;
+  size_t length;
+  size_t size;
+} CpuMemoryRegion_t;
 
 class CpuMemory
 {
@@ -10,7 +17,7 @@ private:
   /**
    * @brief Represents the system's whole memory bank.
    */
-  std::byte bank[CPU_SPEC_MEMORY_BANK_B];
+  std::array<std::byte, CPU_SPEC_MEMORY_BANK_B> bank;
 
 public:
   CpuMemory();
@@ -18,6 +25,18 @@ public:
   /**
    * @brief Pointer to the memory region reserved for the system's work RAM.
    */
-  std::byte *const workRam = &bank[CPU_SPEC_PROGRAM_ROM_WORK_RAM_OFFSET_B];
-  std::byte *const font = &bank[CPU_SPEC_FONT_MEMORY_OFFSET_B];
+  CpuMemoryRegion_t workRam =
+  {
+    .start = &bank[CPU_SPEC_PROGRAM_ROM_WORK_RAM_OFFSET_B],
+    .length = CPU_SPEC_PROGRAM_ROM_WORK_RAM_LENGTH_B,
+    .size = 0,
+  };
+
+  CpuMemoryRegion_t font =
+  {
+    .start = &bank[CPU_SPEC_FONT_MEMORY_OFFSET_B],
+    .length = CPU_SPEC_FONT_MEMORY_LENGTH_B,
+    .size = 0,
+  };
+
 };

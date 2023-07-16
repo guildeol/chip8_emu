@@ -27,6 +27,7 @@ CpuMemory::CpuMemory()
     0xF0, 0x80, 0xF0, 0x80, 0x80  // F
   };
 
-  memset(this->bank, 0x00, sizeof(this->bank));
-  memcpy(this->font, builtin_font, CPU_SPEC_FONT_MEMORY_LENGTH_B);
+  memset(this->bank.data(), 0x00, sizeof(this->bank));
+  memcpy(this->font.start, builtin_font, sizeof(builtin_font));
+  this->font.size = sizeof(builtin_font);
 }

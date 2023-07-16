@@ -5,12 +5,22 @@
 
 #include <cpu.h>
 
-Cpu::Cpu(CpuMemory &memory)
+Cpu::Cpu()
 {
-  this->memory = &memory;
+  this->memory = std::make_unique<CpuMemory>();
+  this->pc = 0;
 }
 
-Chip8ErrorCode_t Cpu::loadGame(std::string gameFile)
+Cpu::Cpu(CpuMemory *memory_p = nullptr) :
+  memory(memory_p)
+{
+  if(memory_p == nullptr)
+    throw std::invalid_argument("Invalid CPU memory pointer");
+
+  this->pc = 0;
+}
+
+chip8_error_code_t Cpu::loadGame(std::string gameFile)
 {
   std::fstream fileStream;
 
@@ -20,7 +30,8 @@ Chip8ErrorCode_t Cpu::loadGame(std::string gameFile)
     return CHIP8_ERROR_LOADING;
   }
 
-  fileStream.readsome(reinterpret_cast<char *>(this->memory->workRam), CPU_SPEC_PROGRAM_ROM_WORK_RAM_LENGTH_B);
+  this->memory->workRam.size = fileStream.readsome(reinterpret_cast<char *>(this->memory->workRam.start),
+                                                   this->memory->workRam.length);
   if (fileStream.fail())
   {
     return CHIP8_ERROR_LOADING;
@@ -29,4 +40,26 @@ Chip8ErrorCode_t Cpu::loadGame(std::string gameFile)
   // Everything went well, now the contents of gameFile are in the emulator's memory bank.
 
   return CHIP8_SUCCESS;
+}
+
+cpu_instruction_t Cpu::fetch()
+{
+  cpu_instruction_t instruction;
+
+  if (this->memory == nullptr)
+  {
+    throw CpuException("Memory uninitialized");
+    return CPU_INVALID_INSTRUCTION;
+  }
+
+  if (this->pc >= this->memory->workRam.size)
+  {
+    throw CpuException("Out of instructions!");
+    return CPU_INVALID_INSTRUCTION;
+  }
+
+  instruction = *reinterpret_cast<cpu_instruction_t *>(&this->memory->workRam.start[this->pc]);
+  this->pc += sizeof(cpu_instruction_t);
+
+  return instruction;
 }

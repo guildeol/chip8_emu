@@ -10,7 +10,7 @@ constexpr uint8_t _argvGameFilePosition = 1;
 int main(int argc, char *argv[])
 {
     Cpu chip8;
-    Chip8ErrorCode_t chip8Result;
+    chip8_error_code_t chip8Result;
 
     if (argc != _expectedArgCount)
     {
@@ -22,6 +22,7 @@ int main(int argc, char *argv[])
     if (chip8Result != CHIP8_SUCCESS)
     {
         printf("ERROR: Failed to load gamefile %s\n", argv[_argvGameFilePosition]);
+        return -1;
     }
 
     return 0;
