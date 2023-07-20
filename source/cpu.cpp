@@ -1,5 +1,7 @@
 #include <iostream>
 #include <fstream>
+#include <bit>
+#include <bitset>
 #include <cstdio>
 #include <cstring>
 
@@ -42,9 +44,9 @@ chip8_error_code_t Cpu::loadGame(std::string gameFile)
   return CHIP8_SUCCESS;
 }
 
-cpu_instruction_t Cpu::fetch()
+cpu_instruction_raw_t Cpu::fetch()
 {
-  cpu_instruction_t instruction;
+  cpu_instruction_raw_t instruction;
 
   if (this->memory == nullptr)
   {
@@ -58,8 +60,15 @@ cpu_instruction_t Cpu::fetch()
     return CPU_INVALID_INSTRUCTION;
   }
 
-  instruction = *reinterpret_cast<cpu_instruction_t *>(&this->memory->workRam.start[this->pc]);
-  this->pc += sizeof(cpu_instruction_t);
+  instruction = *reinterpret_cast<cpu_instruction_raw_t *>(&this->memory->workRam.start[this->pc]);
+  instruction = std::rotr(instruction, 8);
+
+  this->pc += sizeof(cpu_instruction_raw_t);
 
   return instruction;
+}
+
+CpuDecodedInstruction Cpu::decode(cpu_instruction_raw_t instruction)
+{
+  return CpuDecodedInstruction(instruction);
 }

@@ -43,14 +43,3 @@ constexpr uint16_t CPU_SPEC_PROGRAM_ROM_WORK_RAM_LENGTH_B = 0x0800;
  * @brief Number of V (aka General Purpose) registers in the system.
  */
 constexpr uint16_t CPU_SPEC_GENERAL_V_COUNT = 16;
-
-/**
- * @brief Abstract type for CPU instructions.
- */
-typedef uint16_t cpu_instruction_t;
-
-/**
- * @brief Code for an invalid CPU Instruction.
- *
- */
-constexpr cpu_instruction_t CPU_INVALID_INSTRUCTION = 0xFFFF;

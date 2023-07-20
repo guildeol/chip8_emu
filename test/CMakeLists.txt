@@ -20,4 +20,5 @@ target_sources(chip8_test PUBLIC
                 suites/CPU/cpu_test.cpp
                 ${CMAKE_HOME_DIRECTORY}/source/cpu.cpp
                 ${CMAKE_HOME_DIRECTORY}/source/cpu_memory.cpp
+                ${CMAKE_HOME_DIRECTORY}/source/cpu_instruction.cpp
               )

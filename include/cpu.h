@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 
+#include "cpu_instruction.h"
 #include "cpu_specs.h"
 #include "cpu_memory.h"
 
@@ -19,7 +20,7 @@ class CpuException : public std::exception
       this->message = msg;
     }
 
-    const char * what ()
+    const char * what()
     {
         return this->message.c_str();
     }
@@ -53,5 +54,6 @@ class Cpu
      */
     chip8_error_code_t loadGame(std::string gameFile);
 
-    cpu_instruction_t fetch();
+    cpu_instruction_raw_t fetch();
+    CpuDecodedInstruction decode(cpu_instruction_raw_t instruction);
 };
