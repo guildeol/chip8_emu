@@ -33,4 +33,5 @@ class CpuDecodedInstruction
     CpuDecodedInstruction(cpu_instruction_raw_t raw);
 
     cpu_instruction_raw_t toRaw();
+
 };
