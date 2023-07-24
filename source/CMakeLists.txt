@@ -5,12 +5,16 @@ set(HEADERS
       ${INCLUDE_PATH}/cpu_specs.h
       ${INCLUDE_PATH}/cpu_memory.h
       ${INCLUDE_PATH}/cpu_instruction.h
+      ${INCLUDE_PATH}/logger/base_logger.h
+      ${INCLUDE_PATH}/logger/console_logger.h
    )
 
 set(SOURCES
       cpu.cpp
       cpu_memory.cpp
       cpu_instruction.cpp
+      logger/base_logger.cpp
+      logger/console_logger.cpp
    )
 
 add_library(chip8_lib STATIC
@@ -19,3 +23,4 @@ add_library(chip8_lib STATIC
            )
 
 target_include_directories(chip8_lib PUBLIC ${INCLUDE_PATH})
+target_link_libraries(chip8_lib PUBLIC fmt)

@@ -13,12 +13,15 @@ target_include_directories(chip8_test PUBLIC
 
 target_link_libraries(chip8_test PUBLIC
                         gtest
+                        fmt
                      )
-
 
 target_sources(chip8_test PUBLIC
                 suites/CPU/cpu_test.cpp
+                suites/logger/logger_test.cpp
                 ${CMAKE_HOME_DIRECTORY}/source/cpu.cpp
                 ${CMAKE_HOME_DIRECTORY}/source/cpu_memory.cpp
                 ${CMAKE_HOME_DIRECTORY}/source/cpu_instruction.cpp
+                ${CMAKE_HOME_DIRECTORY}/source/logger/base_logger.cpp
+                ${CMAKE_HOME_DIRECTORY}/source/logger/console_logger.cpp
               )
