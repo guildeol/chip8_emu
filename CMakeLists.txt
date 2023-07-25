@@ -16,3 +16,6 @@ add_executable(chip8_emu emulator.cpp)
 target_include_directories(chip8_emu PUBLIC "include")
 target_link_libraries(chip8_emu PUBLIC chip8_lib)
 
+add_executable(chip8_display displayer.cpp)
+target_include_directories(chip8_display PUBLIC "include")
+target_link_libraries(chip8_display PUBLIC chip8_lib sfml-graphics sfml-window sfml-system)

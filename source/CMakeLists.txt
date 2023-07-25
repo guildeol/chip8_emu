@@ -7,6 +7,8 @@ set(HEADERS
       ${INCLUDE_PATH}/cpu_instruction.h
       ${INCLUDE_PATH}/logger/base_logger.h
       ${INCLUDE_PATH}/logger/console_logger.h
+      ${INCLUDE_PATH}/display/base_display.h
+      ${INCLUDE_PATH}/display/sfml_display.h
    )
 
 set(SOURCES
@@ -15,6 +17,7 @@ set(SOURCES
       cpu_instruction.cpp
       logger/base_logger.cpp
       logger/console_logger.cpp
+      display/sfml_display.cpp
    )
 
 add_library(chip8_lib STATIC
