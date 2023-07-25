@@ -5,9 +5,12 @@
 #include "logger/base_logger.h"
 #include "logger/console_logger.h"
 
-Logger::ConsoleLogger::ConsoleLogger(Logger::LogLevel level) :
-  BaseLogger(level, &std::cout, &std::cerr)
+namespace Logger
 {
+  ConsoleLogger::ConsoleLogger(LogLevel level, std::string preamble) :
+    BaseLogger(level, &std::cout, &std::cerr, preamble)
+  {
 
+  }
 }
 

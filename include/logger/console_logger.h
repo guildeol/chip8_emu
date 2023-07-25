@@ -4,9 +4,9 @@
 
 namespace Logger
 {
-  class ConsoleLogger : public Logger::BaseLogger
+  class ConsoleLogger : public BaseLogger
   {
     public:
-      ConsoleLogger(Logger::LogLevel level);
+      ConsoleLogger(LogLevel level, std::string preamble = "");
   };
 }

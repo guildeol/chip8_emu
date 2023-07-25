@@ -17,7 +17,7 @@ TEST(LoggerTest, ShouldLogNothing)
 {
   std::stringstream logStream;
 
-  BaseLogger log = BaseLogger(LogLevel::OFF, &logStream, &logStream);
+  BaseLogger log = BaseLogger(LogLevel::OFF, &logStream, &logStream, "");
 
   log.error("Test!");
   log.warning("Test!");
@@ -31,7 +31,7 @@ TEST(LoggerTest, ShouldLogError)
   std::stringstream logStream;
   std::stringstream expectedMsg;
 
-  BaseLogger log = BaseLogger(LogLevel::ERROR, &logStream, &logStream);
+  BaseLogger log = BaseLogger(LogLevel::ERROR, &logStream, &logStream, "");
 
   expectedMsg << fmt::format(fg(fmt::color::red), "[ERR]: Test!") << std::endl;
 
@@ -44,7 +44,7 @@ TEST(LoggerTest, ShouldLogWarning)
   std::stringstream logStream;
   std::stringstream expectedMsg;
 
-  BaseLogger log = BaseLogger(LogLevel::WARNING, &logStream, &logStream);
+  BaseLogger log = BaseLogger(LogLevel::WARNING, &logStream, &logStream, "");
 
   expectedMsg << fmt::format(fg(fmt::color::yellow), "[WRN]: Test!") << std::endl;
 
@@ -57,7 +57,7 @@ TEST(LoggerTest, ShouldLogInfo)
   std::stringstream logStream;
   std::stringstream expectedMsg;
 
-  BaseLogger log = BaseLogger(LogLevel::INFO, &logStream, &logStream);
+  BaseLogger log = BaseLogger(LogLevel::INFO, &logStream, &logStream, "");
 
   expectedMsg << fmt::format(fg(fmt::color::green), "[INF]: Test!") << std::endl;
 
@@ -70,7 +70,7 @@ TEST(LoggerTest, ShouldLogDebug)
   std::stringstream logStream;
   std::stringstream expectedMsg;
 
-  BaseLogger log = BaseLogger(LogLevel::DEBUG, &logStream, &logStream);
+  BaseLogger log = BaseLogger(LogLevel::DEBUG, &logStream, &logStream, "");
 
   expectedMsg << fmt::format(fg(fmt::color::gray), "[DBG]: Test!") << std::endl;
 

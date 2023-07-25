@@ -4,42 +4,53 @@
 
 #include "logger/base_logger.h"
 
-Logger::BaseLogger::BaseLogger(Logger::LogLevel level, std::ostream *infoStream, std::ostream *errStream):
-  level(level),
-  infoStream(infoStream),
-  errStream(errStream)
+namespace Logger
 {
+  BaseLogger::BaseLogger(LogLevel level, std::ostream *infoStream, std::ostream *errStream, std::string preamble) :
+    level(level),
+    infoStream(infoStream),
+    errStream(errStream),
+    preamble(preamble)
+  {
+  }
 
-}
+  static void logMsg(std::ostream *stream, fmt::color color, std::string preamble, std::string lvl, std::string msg)
+  {
+    if (preamble.size() > 0)
+      *stream << fmt::format(fg(color), "[{}][{}]: {}", preamble, lvl, msg) << std::endl;
+    else
+      *stream << fmt::format(fg(color), "[{}]: {}", lvl, msg) << std::endl;
+  }
 
-void Logger::BaseLogger::error(std::string msg)
-{
-  if (this->level < Logger::LogLevel::ERROR)
-    return;
+  void BaseLogger::error(std::string msg)
+  {
+    if (this->level < LogLevel::ERROR)
+      return;
 
-  (*this->errStream) << fmt::format(fg(fmt::color::red), "[ERR]: {}", msg) << std::endl;
-}
+    logMsg(this->errStream, fmt::color::red, preamble, "ERR", msg);
+  }
 
-void Logger::BaseLogger::warning(std::string msg)
-{
-  if (this->level < Logger::LogLevel::WARNING)
-    return;
+  void BaseLogger::warning(std::string msg)
+  {
+    if (this->level < LogLevel::WARNING)
+      return;
 
-  (*this->errStream) << fmt::format(fg(fmt::color::yellow), "[WRN]: {}", msg) << std::endl;
-}
+    logMsg(this->errStream, fmt::color::yellow, preamble, "WRN", msg);
+  }
 
-void Logger::BaseLogger::info(std::string msg)
-{
-  if (this->level < Logger::LogLevel::INFO)
-    return;
+  void BaseLogger::info(std::string msg)
+  {
+    if (this->level < LogLevel::INFO)
+      return;
 
-  (*this->infoStream) << fmt::format(fg(fmt::color::green), "[INF]: {}", msg) << std::endl;
-}
+    logMsg(this->infoStream, fmt::color::green, preamble, "INF", msg);
+  }
 
-void Logger::BaseLogger::debug(std::string msg)
-{
-  if (this->level < Logger::LogLevel::DEBUG)
-    return;
+  void BaseLogger::debug(std::string msg)
+  {
+    if (this->level < LogLevel::DEBUG)
+      return;
 
-  (*this->infoStream) << fmt::format(fg(fmt::color::gray), "[DBG]: {}", msg) << std::endl;
+    logMsg(this->infoStream, fmt::color::gray, preamble, "DBG", msg);
+  }
 }

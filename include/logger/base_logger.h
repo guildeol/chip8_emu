@@ -20,12 +20,13 @@ namespace Logger
       BaseLogger();
 
     protected:
-      Logger::LogLevel level = Logger::LogLevel::INFO;
+      LogLevel level = LogLevel::INFO;
       std::ostream *infoStream;
       std::ostream *errStream;
+      std::string preamble;
 
     public:
-      BaseLogger(Logger::LogLevel level, std::ostream *infoStream, std::ostream *errStream);
+      BaseLogger(Logger::LogLevel level, std::ostream *infoStream, std::ostream *errStream, std::string preamble);
 
       void error(std::string msg);
       void warning(std::string msg);
