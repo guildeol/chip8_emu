@@ -6,7 +6,6 @@ namespace Display
 {
   using Dimension_t = unsigned int;
   using Coordinate_t = unsigned int;
-  using PixelState_t = bool;
 
   class BaseDisplay
   {
@@ -15,9 +14,10 @@ namespace Display
       virtual void setPixel(Coordinate_t x, Coordinate_t y) = 0;
 
     protected:
-      Dimension_t width;
-      Dimension_t height;
-      Dimension_t scale;
-      std::vector<PixelState_t> pixels;
+      Dimension_t nativeWidth;
+      Dimension_t nativeHeight;
+
+      Dimension_t emulatedWidth;
+      Dimension_t emulatedHeight;
   };
 }

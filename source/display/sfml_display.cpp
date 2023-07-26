@@ -9,33 +9,39 @@ static Logger::ConsoleLogger sfmlDisplayLog(Logger::LogLevel::DEBUG, "sfml_displ
 
 namespace Display
 {
-  SfmlDisplay::SfmlDisplay(Dimension_t width, Dimension_t height, Dimension_t scale) :
-    window(sf::RenderWindow(sf::VideoMode(width, height), "Chip8 - SFML"))
+  SfmlDisplay::SfmlDisplay(Dimension_t nativeWidth, Dimension_t nativeHeight,
+                           Dimension_t emulatedWidth, Dimension_t emulatedHeight) : window(sf::RenderWindow(sf::VideoMode(nativeWidth, nativeHeight), "Chip8 - SFML"))
   {
-    this->width = width;
-    this->height = height;
-    this->scale = scale;
+    this->nativeWidth = nativeWidth;
+    this->nativeHeight = nativeHeight;
+    this->emulatedWidth = emulatedWidth;
+    this->emulatedHeight = emulatedHeight;
 
     try
     {
-      this->fakePixels = std::vector<SfmlDisplay::fake_pixel_s>((this->width / this->scale) * (this->height / this->scale));
+      this->pixels = std::vector<SfmlDisplay::sfml_pixel_s>(this->emulatedWidth * this->emulatedHeight);
 
-      sfmlDisplayLog.info(fmt::format("Initialized display with {} fake pixels", this->fakePixels.size()));
+      sfmlDisplayLog.info(fmt::format("Initialized display with {} fake pixels", this->pixels.size()));
 
-      for (auto i = 0; i < this->fakePixels.size(); i++)
+      for (auto i = 0; i < this->pixels.size(); i++)
       {
-        auto entry = this->fakePixels.at(i);
+        auto xCoord = i % this->emulatedWidth;
+        auto yCoord = i / this->emulatedWidth;
+
+        auto &entry = this->pixels.at(i);
+        auto xScale = this->nativeWidth / this->emulatedWidth;
+        auto yScale = this->nativeHeight / this->emulatedHeight;
 
         entry.isOn = false;
-        entry.shape = sf::RectangleShape(sf::Vector2f(1.0f * this->scale, 1.0f * this->scale));
+        entry.shape = sf::RectangleShape(sf::Vector2f(1.0f * xScale, 1.0f * yScale));
 
-        auto newX = (i * this->scale) % this->width;
-        auto newY = (i * this->scale) % this->height;
+        entry.shape.setPosition(sf::Vector2f(xCoord * xScale, yCoord * yScale));
 
-        sfmlDisplayLog.info(fmt::format("Initialized pixel {} at coords [{}, {}]", i, newX, newY));
-
-        // entry.shape.setPosition();
+        sfmlDisplayLog.debug(fmt::format("Initialized pixel {} at coords [{}, {}]", i, entry.shape.getPosition().x,
+                                                                                      entry.shape.getPosition().y));
       }
+
+      this->isOpen = true;
     }
     catch (const std::exception &e)
     {
@@ -43,7 +49,31 @@ namespace Display
       throw e;
     }
   }
+  void SfmlDisplay::update()
+  {
+    this->isOpen = this->window.isOpen();
+    if (!this->isOpen)
+      return;
 
+    sf::RectangleShape test(sf::Vector2f(20, 20));
+
+    sf::Event event;
+    while (this->window.pollEvent(event))
+    {
+      if (event.type == sf::Event::Closed)
+        this->window.close();
+
+      this->window.clear();
+
+      for (auto &entry : this->pixels)
+      {
+        if (entry.isOn)
+          this->window.draw(entry.shape);
+      }
+
+      this->window.display();
+    }
+  }
 
   void SfmlDisplay::clear()
   {
@@ -52,7 +82,19 @@ namespace Display
 
   void SfmlDisplay::setPixel(Coordinate_t x, Coordinate_t y)
   {
-    return;
+    x = x % this->emulatedWidth;
+    y = y % this->emulatedHeight;
+
+    auto &p = this->pixels.at(x + (y * this->emulatedWidth));
+
+    p.isOn = true;
+
+    sfmlDisplayLog.debug(fmt::format("Pixel[{}, {}] @ [{}, {}] is ON", x, y, p.shape.getPosition().x,
+                         p.shape.getPosition().y));
   }
 
+  void SfmlDisplay::clearPixel(Coordinate_t x, Coordinate_t y)
+  {
+    return;
+  }
 }

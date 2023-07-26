@@ -12,18 +12,22 @@ namespace Display
   class SfmlDisplay : public BaseDisplay
   {
     public:
-      SfmlDisplay(Dimension_t width, Dimension_t height, Dimension_t scale);
+      bool isOpen;
+
+      SfmlDisplay(Dimension_t nativeWidth, Dimension_t nativeHeight,
+                  Dimension_t emulatedWidth, Dimension_t emulatedHeight);
+      void update();
       void clear();
       void setPixel(Coordinate_t x, Coordinate_t y);
-
+      void clearPixel(Coordinate_t x, Coordinate_t y);
     private:
-      struct fake_pixel_s
+      struct sfml_pixel_s
       {
         sf::RectangleShape shape;
         bool isOn;
       };
 
       sf::RenderWindow window;
-      std::vector<struct fake_pixel_s> fakePixels;
+      std::vector<struct sfml_pixel_s> pixels;
   };
 };
