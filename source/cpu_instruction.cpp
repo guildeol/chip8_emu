@@ -1,5 +1,11 @@
 #include "cpu_instruction.h"
 
+CpuDecodedInstruction::CpuDecodedInstruction()
+{
+  this->fields[1].byte = 0xFF;
+  this->fields[2].byte = 0xFF;
+}
+
 CpuDecodedInstruction::CpuDecodedInstruction(cpu_instruction_raw_t raw)
 {
   this->fields[1].byte = raw & 0xFF;

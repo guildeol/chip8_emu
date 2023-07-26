@@ -232,10 +232,11 @@ int main(int argc, char *argv[])
 
   for (size_t i = 0; i < memory->workRam.size; i += 2)
   {
-    cpu_instruction_raw_t instruction = chip8.fetch();
+    chip8.fetch();
+    chip8.decode();
 
     std::cout << std::hex << (0x200 + i) << " ";
-    std::cout << disassemble(instruction);
+    std::cout << disassemble(chip8.decodedInstruction);
     std::cout << std::endl;
   }
 

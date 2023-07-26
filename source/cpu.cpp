@@ -10,6 +10,9 @@
 Cpu::Cpu()
 {
   this->memory = std::make_unique<CpuMemory>();
+
+  this->currentInstruction = CPU_INVALID_INSTRUCTION;
+  this->decodedInstruction = CpuDecodedInstruction(CPU_INVALID_INSTRUCTION);
   this->pc = 0;
 }
 
@@ -44,31 +47,21 @@ chip8_error_code_t Cpu::loadGame(std::string gameFile)
   return CHIP8_SUCCESS;
 }
 
-cpu_instruction_raw_t Cpu::fetch()
+void Cpu::fetch()
 {
-  cpu_instruction_raw_t instruction;
-
   if (this->memory == nullptr)
-  {
     throw CpuException("Memory uninitialized");
-    return CPU_INVALID_INSTRUCTION;
-  }
 
   if (this->pc >= this->memory->workRam.size)
-  {
     throw CpuException("Out of instructions!");
-    return CPU_INVALID_INSTRUCTION;
-  }
 
-  instruction = *reinterpret_cast<cpu_instruction_raw_t *>(&this->memory->workRam.start[this->pc]);
-  instruction = std::rotr(instruction, 8);
+  this->currentInstruction = *reinterpret_cast<cpu_instruction_raw_t *>(&this->memory->workRam.start[this->pc]);
+  this->currentInstruction = std::rotr(this->currentInstruction, 8);
 
   this->pc += sizeof(cpu_instruction_raw_t);
-
-  return instruction;
 }
 
-CpuDecodedInstruction Cpu::decode(cpu_instruction_raw_t instruction)
+void Cpu::decode()
 {
-  return CpuDecodedInstruction(instruction);
+  this->decodedInstruction = CpuDecodedInstruction(this->currentInstruction);
 }

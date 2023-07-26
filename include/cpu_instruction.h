@@ -17,7 +17,7 @@ typedef union cpu_instruction_byte_field_u
 /**
  * @brief Abstract type for CPU instructions.
  */
-typedef uint16_t cpu_instruction_raw_t;
+using cpu_instruction_raw_t = uint16_t;
 
 /**
  * @brief Code for an invalid CPU Instruction.
@@ -30,8 +30,8 @@ class CpuDecodedInstruction
   public:
     cpu_instruction_byte_field_t fields[sizeof(cpu_instruction_raw_t)];
 
+    CpuDecodedInstruction();
     CpuDecodedInstruction(cpu_instruction_raw_t raw);
 
     cpu_instruction_raw_t toRaw();
-
 };

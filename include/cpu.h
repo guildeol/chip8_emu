@@ -9,6 +9,8 @@
 
 #include "errcodes.h"
 
+using CpuDrawCallback_t = void (int x_coord, int y_coord);
+
 class CpuException : public std::exception
 {
   private:
@@ -32,7 +34,12 @@ class Cpu
     size_t pc;
     std::unique_ptr<CpuMemory> memory = nullptr;
 
+    // CpuDrawCallback_t &drawCallback;
+
   public:
+    cpu_instruction_raw_t currentInstruction;
+    CpuDecodedInstruction decodedInstruction;
+
     /**
      * @brief Construct a new Cpu object
      */
@@ -54,6 +61,7 @@ class Cpu
      */
     chip8_error_code_t loadGame(std::string gameFile);
 
-    cpu_instruction_raw_t fetch();
-    CpuDecodedInstruction decode(cpu_instruction_raw_t instruction);
+    void fetch();
+    void decode();
+    void execute();
 };

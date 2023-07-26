@@ -55,8 +55,8 @@ TEST(CpuTest, ShouldFetch)
 
   chip8.loadGame("/tmp/chip8_test.ch8");
 
-  auto instruction = chip8.fetch();
-  EXPECT_EQ(instruction, 0x00E0);
+  chip8.fetch();
+  EXPECT_EQ(chip8.currentInstruction, 0x00E0);
 }
 
 TEST(CpuTest, ShouldFetchMultiple)
@@ -68,11 +68,11 @@ TEST(CpuTest, ShouldFetchMultiple)
 
   chip8.loadGame("/tmp/chip8_test.ch8");
 
-  auto instruction = chip8.fetch();
-  EXPECT_EQ(instruction, 0x00E0);
+  chip8.fetch();
+  EXPECT_EQ(chip8.currentInstruction, 0x00E0);
 
-  instruction = chip8.fetch();
-  EXPECT_EQ(instruction, 0x1234);
+  chip8.fetch();
+  EXPECT_EQ(chip8.currentInstruction, 0x1234);
 }
 
 TEST(CpuTest, ShouldNotFetchBeyondLimit)
@@ -84,8 +84,8 @@ TEST(CpuTest, ShouldNotFetchBeyondLimit)
 
   chip8.loadGame("/tmp/chip8_test.ch8");
 
-  auto instruction = chip8.fetch();
-  EXPECT_EQ(instruction, 0x00E0);
+  chip8.fetch();
+  EXPECT_EQ(chip8.currentInstruction, 0x00E0);
 
   EXPECT_THROW(chip8.fetch(), CpuException);
 }
@@ -99,14 +99,14 @@ TEST(CpuTest, ShouldDecodeInstruction)
 
   chip8.loadGame("/tmp/chip8_test.ch8");
 
-  auto instruction = chip8.fetch();
-  CpuDecodedInstruction decoded_instruction = chip8.decode(instruction);
+  chip8.fetch();
+  chip8.decode();
 
-  EXPECT_EQ(decoded_instruction.fields[0].byte, 0x12);
-  EXPECT_EQ(decoded_instruction.fields[0].nibble.high, 0x01);
-  EXPECT_EQ(decoded_instruction.fields[0].nibble.low, 0x02);
+  EXPECT_EQ(chip8.decodedInstruction.fields[0].byte, 0x12);
+  EXPECT_EQ(chip8.decodedInstruction.fields[0].nibble.high, 0x01);
+  EXPECT_EQ(chip8.decodedInstruction.fields[0].nibble.low, 0x02);
 
-  EXPECT_EQ(decoded_instruction.fields[1].byte, 0x34);
-  EXPECT_EQ(decoded_instruction.fields[1].nibble.high, 0x03);
-  EXPECT_EQ(decoded_instruction.fields[1].nibble.low, 0x04);
+  EXPECT_EQ(chip8.decodedInstruction.fields[1].byte, 0x34);
+  EXPECT_EQ(chip8.decodedInstruction.fields[1].nibble.high, 0x03);
+  EXPECT_EQ(chip8.decodedInstruction.fields[1].nibble.low, 0x04);
 }
