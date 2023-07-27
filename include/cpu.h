@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <string>
 #include <memory>
 
@@ -9,7 +10,8 @@
 
 #include "errcodes.h"
 
-using CpuDrawCallback_t = void (int x_coord, int y_coord);
+using CpuDrawCallback_t = std::function<void (int x_coord, int y_coord, bool set)>;
+using CpuClearCallback_t = std::function<void ()>;
 
 class CpuException : public std::exception
 {
@@ -30,16 +32,16 @@ class CpuException : public std::exception
 
 class Cpu
 {
+  using Register8 = uint8_t;
+  using Register16 = uint16_t;
+
   private:
     size_t pc;
     std::unique_ptr<CpuMemory> memory = nullptr;
-
-    // CpuDrawCallback_t &drawCallback;
+    CpuDrawCallback_t drawCallback;
+    CpuClearCallback_t clearCallback;
 
   public:
-    cpu_instruction_raw_t currentInstruction;
-    CpuDecodedInstruction decodedInstruction;
-
     /**
      * @brief Construct a new Cpu object
      */
@@ -61,7 +63,16 @@ class Cpu
      */
     chip8_error_code_t loadGame(std::string gameFile);
 
+    void setDrawCallback(CpuDrawCallback_t callback);
+    void setClearCallback(CpuClearCallback_t callback);
+
     void fetch();
     void decode();
     void execute();
+
+    std::vector<Register8>V;
+    Register16 I;
+
+    cpu_instruction_raw_t currentInstruction;
+    CpuDecodedInstruction decodedInstruction;
 };

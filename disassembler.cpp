@@ -230,14 +230,21 @@ int main(int argc, char *argv[])
     return -1;
   }
 
-  for (size_t i = 0; i < memory->workRam.size; i += 2)
+  try
   {
-    chip8.fetch();
-    chip8.decode();
+    for (size_t i = 0; i < memory->workRam.size; i += 2)
+    {
+      chip8.fetch();
+      chip8.decode();
 
-    std::cout << std::hex << (0x200 + i) << " ";
-    std::cout << disassemble(chip8.decodedInstruction);
-    std::cout << std::endl;
+      std::cout << std::hex << (0x200 + i) << " ";
+      std::cout << disassemble(chip8.decodedInstruction);
+      std::cout << std::endl;
+    }
+  }
+  catch(const CpuException &e)
+  {
+    // Do nothing
   }
 
   return 0;
