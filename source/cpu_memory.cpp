@@ -1,4 +1,5 @@
 #include <cstring>
+#include <span>
 
 #include "cpu_memory.h"
 
@@ -30,4 +31,16 @@ CpuMemory::CpuMemory()
   memset(this->bank.data(), 0x00, sizeof(this->bank));
   memcpy(this->font.start, builtin_font, sizeof(builtin_font));
   this->font.size = sizeof(builtin_font);
+}
+
+std::vector<std::byte> CpuMemory::getBytes(size_t offset, size_t count)
+{
+  if (offset > this->bank.size())
+    throw std::out_of_range("Offset is out of range!");
+
+  std::vector<std::byte> bytes(count);
+
+  bytes.assign(begin(this->bank) + offset, begin(this->bank) + offset + count);
+
+  return bytes;
 }

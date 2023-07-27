@@ -9,7 +9,7 @@
 #include "cpu.h"
 #include "logger/console_logger.h"
 
-Logger::ConsoleLogger cpuLog = Logger::ConsoleLogger(Logger::LogLevel::WARNING);
+Logger::ConsoleLogger cpuLog = Logger::ConsoleLogger(Logger::LogLevel::DEBUG);
 
 Cpu::Cpu()
 {
@@ -88,7 +88,12 @@ void Cpu::execute()
 {
   auto NNN = this->currentInstruction & 0x0FFF;
   auto NN = this->currentInstruction & 0x00FF;
+  auto N = this->currentInstruction & 0x000F;
   auto X = (this->currentInstruction & 0x0F00) >> 8;
+  auto Y = (this->currentInstruction & 0x00F0) >> 4;
+  std::vector<std::byte> drawBytes;
+  int xDrawCoord;
+  int yDrawCoord;
 
   switch (this->decodedInstruction.fields[0].nibble.high)
   {
@@ -228,9 +233,34 @@ void Cpu::execute()
       // sprintf(mnemonic, "RND V%X,#%02X", instruction.fields[0].nibble.low, instruction.fields[1].byte);
     break;
 
-    case 0xD: // DRW
-      cpuLog.warning(fmt::format("Instruction {} not implemented yet!", this->currentInstruction));
-      // sprintf(mnemonic, "DRW V%X,V%X,#%X", instruction.fields[0].nibble.low, instruction.fields[1].nibble.high,instruction.fields[1].nibble.low);
+    case 0xD: // DRW VX, VY, N
+      drawBytes = this->memory->getBytes(this->I, N);
+
+      this->V[0xF] = 0x00;
+      yDrawCoord = this->V[Y];
+
+      for (auto drawByte : drawBytes)
+      {
+        xDrawCoord = this->V[X];
+
+        std::bitset<8> drawBitset(static_cast<uint8_t>(drawByte));
+        bool wasOn = false;
+
+        for (auto i : {7, 6, 5, 4, 3, 2, 1, 0})
+        {
+          if(drawBitset.test(i))
+          {
+            bool wasOn = this->drawCallback(xDrawCoord, yDrawCoord);
+
+            if (wasOn)
+              this->V[0xF] = 0x01;
+          }
+
+          xDrawCoord++;
+        }
+
+        yDrawCoord++;
+      }
     break;
 
     case 0xE:

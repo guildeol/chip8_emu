@@ -12,6 +12,8 @@ namespace Display
     public:
       virtual void clear() = 0;
       virtual void setPixel(Coordinate_t x, Coordinate_t y) = 0;
+      virtual void clearPixel(Coordinate_t x, Coordinate_t y) = 0;
+      virtual bool getPixelState(Coordinate_t x, Coordinate_t y) = 0;
 
     protected:
       Dimension_t nativeWidth;

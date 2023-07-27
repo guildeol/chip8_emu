@@ -10,7 +10,7 @@
 
 #include "errcodes.h"
 
-using CpuDrawCallback_t = std::function<void (int x_coord, int y_coord, bool set)>;
+using CpuDrawCallback_t = std::function<bool (int x_coord, int y_coord)>;
 using CpuClearCallback_t = std::function<void ()>;
 
 class CpuException : public std::exception

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <array>
+#include <vector>
+#include <stdexcept>
 
 #include "cpu_specs.h"
 
@@ -21,6 +23,7 @@ private:
 
 public:
   CpuMemory();
+  std::vector<std::byte> getBytes(size_t offset, size_t count);
 
   /**
    * @brief Pointer to the memory region reserved for the system's work RAM.
@@ -38,5 +41,4 @@ public:
     .length = CPU_SPEC_FONT_MEMORY_LENGTH_B,
     .size = 0,
   };
-
 };

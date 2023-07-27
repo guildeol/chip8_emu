@@ -5,6 +5,8 @@ project(chip8_emu)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+set(LIBS chip8_lib sfml-graphics sfml-window sfml-system)
+
 add_subdirectory(test)
 add_subdirectory(source)
 
@@ -14,7 +16,7 @@ target_link_libraries(chip8_disassembler PUBLIC chip8_lib)
 
 add_executable(chip8_emu emulator.cpp)
 target_include_directories(chip8_emu PUBLIC "include")
-target_link_libraries(chip8_emu PUBLIC chip8_lib)
+target_link_libraries(chip8_emu PUBLIC ${LIBS})
 
 add_executable(chip8_display displayer.cpp)
 target_include_directories(chip8_display PUBLIC "include")

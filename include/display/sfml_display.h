@@ -20,6 +20,7 @@ namespace Display
       void clear();
       void setPixel(Coordinate_t x, Coordinate_t y);
       void clearPixel(Coordinate_t x, Coordinate_t y);
+      bool getPixelState(Coordinate_t x, Coordinate_t y);
     private:
       struct sfml_pixel_s
       {

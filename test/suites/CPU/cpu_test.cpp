@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -12,9 +13,32 @@ using namespace std;
 using namespace testing;
 
 bool isClear = false;
-void clearCallback()
+void testClearCallback()
 {
   isClear = true;
+}
+
+constexpr int testDisplayWidth = 64;
+constexpr int testDisplayHeight = 32;
+std::vector<bool> testPixels(testDisplayWidth * testDisplayHeight);
+bool testDrawCallback(int x_coord, int y_coord)
+{
+  auto p = x_coord + (y_coord * testDisplayWidth);
+  bool wasOn = false;
+
+  if (testPixels[p] == true)
+    wasOn = true;
+
+  testPixels[p] = testPixels[p] ^ true;
+
+  return wasOn;
+}
+
+void run(Cpu &cpu)
+{
+  cpu.fetch();
+  cpu.decode();
+  cpu.execute();
 }
 
 class Chip8TestFile
@@ -36,6 +60,7 @@ class CpuTest : public Test
     CpuTest()
     {
       isClear = false;
+      std::fill(begin(testPixels), end(testPixels), false);
     }
 };
 
@@ -134,7 +159,7 @@ TEST_F(CpuTest, ShouldExecuteCLS)
 
   chip8.loadGame("/tmp/chip8_test.ch8");
 
-  chip8.setClearCallback(clearCallback);
+  chip8.setClearCallback(testClearCallback);
 
   chip8.fetch();
   chip8.decode();
@@ -146,7 +171,7 @@ TEST_F(CpuTest, ShouldExecuteCLS)
 TEST_F(CpuTest, ShouldExecuteLDINNN)
 {
   Cpu chip8;
-  vector<uint8_t> testFileContents = {0x0A2, 0x50};
+  vector<uint8_t> testFileContents = {0xA2, 0x50};
   Chip8TestFile testFile = Chip8TestFile("/tmp/chip8_test.ch8", testFileContents);
 
   chip8.loadGame("/tmp/chip8_test.ch8");
@@ -217,4 +242,31 @@ TEST_F(CpuTest, ShouldExecuteADDVXNN)
   chip8.execute();
 
   EXPECT_EQ(chip8.V[3], 0x50);
+}
+
+TEST_F(CpuTest, ShouldExecuteDRWXYN)
+{
+  Cpu chip8;
+  vector<uint8_t> testFileContents = {
+    0xA2, 0x08, // 0x200: LD I, 0x208
+    0x60, 0x00, // 0x202: LD V0, 0x00
+    0x61, 0x00, // 0x204: LD V1, 0x00
+    0xD0, 0x01, // 0x206: DRW V0, V1 0x1
+    0xFF, 0xFF, // 0x208: Draw data: 0xFFFF
+  };
+
+  chip8.setDrawCallback(testDrawCallback);
+
+  Chip8TestFile testFile = Chip8TestFile("/tmp/chip8_test.ch8", testFileContents);
+  chip8.loadGame("/tmp/chip8_test.ch8");
+
+  run(chip8);
+  run(chip8);
+  run(chip8);
+  run(chip8);
+
+  auto expectedPixels = std::vector<bool>(8);
+  std::fill(begin(expectedPixels), end(expectedPixels), true);
+
+  EXPECT_TRUE(std::equal(begin(testPixels), begin(testPixels) + expectedPixels.size(), begin(expectedPixels)));
 }

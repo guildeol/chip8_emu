@@ -5,7 +5,7 @@
 #include "logger/console_logger.h"
 #include "display/sfml_display.h"
 
-static Logger::ConsoleLogger sfmlDisplayLog(Logger::LogLevel::DEBUG, "sfml_display");
+static Logger::ConsoleLogger sfmlDisplayLog(Logger::LogLevel::INFO, "sfml_display");
 
 namespace Display
 {
@@ -77,7 +77,10 @@ namespace Display
 
   void SfmlDisplay::clear()
   {
-    return;
+    for (auto &entry : this->pixels)
+      entry.isOn = false;
+
+    sfmlDisplayLog.debug(fmt::format("Cleared scren!"));
   }
 
   void SfmlDisplay::setPixel(Coordinate_t x, Coordinate_t y)
@@ -89,12 +92,30 @@ namespace Display
 
     p.isOn = true;
 
-    sfmlDisplayLog.debug(fmt::format("Pixel[{}, {}] @ [{}, {}] is ON", x, y, p.shape.getPosition().x,
+    sfmlDisplayLog.info(fmt::format("Pixel[{}, {}] @ [{}, {}] is ON", x, y, p.shape.getPosition().x,
                          p.shape.getPosition().y));
   }
 
   void SfmlDisplay::clearPixel(Coordinate_t x, Coordinate_t y)
   {
-    return;
+    x = x % this->emulatedWidth;
+    y = y % this->emulatedHeight;
+
+    auto &p = this->pixels.at(x + (y * this->emulatedWidth));
+
+    p.isOn = false;
+
+    sfmlDisplayLog.info(fmt::format("Pixel[{}, {}] @ [{}, {}] is OFF", x, y, p.shape.getPosition().x,
+                         p.shape.getPosition().y));
+  }
+
+  bool SfmlDisplay::getPixelState(Coordinate_t x, Coordinate_t y)
+  {
+    x = x % this->emulatedWidth;
+    y = y % this->emulatedHeight;
+
+    auto p = this->pixels.at(x + (y * this->emulatedWidth));
+
+    return p.isOn;
   }
 }
