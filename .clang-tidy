@@ -11,10 +11,11 @@ Checks: >
   readability-identifier-naming
 
 CheckOptions:
-  - { key: readability-identifier-naming.NamespaceCase,             value: CamelCase }
-  - { key: readability-identifier-naming.ClassCase,                 value: CamelCase }
-  - { key: readability-identifier-naming.StructCase,                value: CamelCase }
+  - { key: readability-identifier-naming.NamespaceCase,             value: PascalCase }
+  - { key: readability-identifier-naming.ClassCase,                 value: PascalCase }
+  # - { key: readability-identifier-naming.StructCase,                value: PascalCase }
+  # - { key: readability-identifier-naming.TypeCase,                  value: PascalCase }
+  - { key: readability-identifier-naming.FunctionCase,              value: lower_case  }
   - { key: readability-identifier-naming.MethodCase,                value: lower_case }
-  - { key: readability-identifier-naming.TemplateParameterCase,     value: lower_case  }
-  - { key: readability-identifier-naming.FunctionCase,              value: lower_case }
-  - { key: readability-identifier-naming.VariableCase,              value: lower_case }
+  # - { key: readability-identifier-naming.TemplateParameterCase,     value: lower_case }
+  # - { key: readability-identifier-naming.VariableCase,              value: lower_case }

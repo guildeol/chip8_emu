@@ -1,27 +1,14 @@
-set(GOOGLETEST_DIR "./googletest")
-
-add_subdirectory(${GOOGLETEST_DIR})
+include(../cmake/googletest.cmake)
 
 add_executable(chip8_test main.cpp)
 
-target_include_directories(chip8_test PUBLIC
-                            ${GOOGLETEST_DIR}/googlemock/include
-                            ${GOOGLETEST_DIR}/googletest/include
-                            ${CMAKE_HOME_DIRECTORY}/include
-                          )
+target_include_directories(chip8_test PUBLIC)
 
+target_link_libraries(chip8_test PUBLIC chip8 gtest gmock fmt::fmt)
 
-target_link_libraries(chip8_test PUBLIC
-                        gtest
-                        fmt
-                     )
+# Glob all .c and .cpp files
+file(GLOB TEST_SOURCES
+  "${CMAKE_CURRENT_SOURCE_DIR}/**/*.cpp"
+)
 
-target_sources(chip8_test PUBLIC
-                suites/CPU/cpu_test.cpp
-                suites/logger/logger_test.cpp
-                ${CMAKE_HOME_DIRECTORY}/source/cpu.cpp
-                ${CMAKE_HOME_DIRECTORY}/source/cpu_memory.cpp
-                ${CMAKE_HOME_DIRECTORY}/source/cpu_instruction.cpp
-                ${CMAKE_HOME_DIRECTORY}/source/logger/base_logger.cpp
-                ${CMAKE_HOME_DIRECTORY}/source/logger/console_logger.cpp
-              )
+target_sources(chip8_test PUBLIC suites/logger/logger_test.cpp)

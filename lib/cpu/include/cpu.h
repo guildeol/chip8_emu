@@ -15,58 +15,58 @@ using CpuClearCallback_t = std::function<void()>;
 
 class CpuException : public std::exception
 {
-private:
-  std::string message;
+  private:
+    std::string message;
 
-public:
-  CpuException(std::string msg) { this->message = msg; }
+  public:
+    CpuException(std::string msg) { this->message = msg; }
 
-  const char *what() { return this->message.c_str(); }
+    const char *what() { return this->message.c_str(); }
 };
 
 class Cpu
 {
-  using Register8 = uint8_t;
-  using Register16 = uint16_t;
+    using Register8 = uint8_t;
+    using Register16 = uint16_t;
 
-private:
-  size_t pc;
-  std::unique_ptr<CpuMemory> memory = nullptr;
-  CpuDrawCallback_t drawCallback;
-  CpuClearCallback_t clearCallback;
+  private:
+    size_t pc;
+    std::unique_ptr<CpuMemory> memory = nullptr;
+    CpuDrawCallback_t drawCallback;
+    CpuClearCallback_t clearCallback;
 
-public:
-  /**
-   * @brief Construct a new Cpu object
-   */
-  Cpu();
+  public:
+    /**
+     * @brief Construct a new Cpu object
+     */
+    Cpu();
 
-  /**
-   * @brief Construct a new Cpu object
-   *
-   * @param[in] memory_p Pointer to a CpuMemory object.
-   */
-  Cpu(CpuMemory *memory_p);
+    /**
+     * @brief Construct a new Cpu object
+     *
+     * @param[in] memory_p Pointer to a CpuMemory object.
+     */
+    Cpu(CpuMemory *memory_p);
 
-  /**
-   * @brief Loads a given ROM into the system memory.
-   *
-   * @param[in] gameFile ROM to be loaded.
-   *
-   * @return chip8_error_code_t.
-   */
-  chip8_error_code_t loadGame(std::string gameFile);
+    /**
+     * @brief Loads a given ROM into the system memory.
+     *
+     * @param[in] gameFile ROM to be loaded.
+     *
+     * @return chip8_error_code_t.
+     */
+    chip8_error_code_t loadGame(std::string gameFile);
 
-  void setDrawCallback(CpuDrawCallback_t callback);
-  void setClearCallback(CpuClearCallback_t callback);
+    void setDrawCallback(CpuDrawCallback_t callback);
+    void setClearCallback(CpuClearCallback_t callback);
 
-  void fetch();
-  void decode();
-  void execute();
+    void fetch();
+    void decode();
+    void execute();
 
-  std::vector<Register8> V;
-  Register16 I;
+    std::vector<Register8> V;
+    Register16 I;
 
-  cpu_instruction_raw_t currentInstruction;
-  CpuDecodedInstruction decodedInstruction;
+    cpu_instruction_raw_t currentInstruction;
+    CpuDecodedInstruction decodedInstruction;
 };

@@ -4,9 +4,9 @@
 #include <cstring>
 #include <fmt/format.h>
 #include <fstream>
-#include <iostream>
 
 #include "cpu.h"
+
 // #include "logger/console_logger.h"
 
 // Logger::ConsoleLogger cpuLog =
@@ -120,30 +120,30 @@ void Cpu::execute()
     }
     break;
 
-  case 0x1: // JP NNN
+  case 0x01: // JP NNN
     this->pc = NNN - CPU_SPEC_PROGRAM_ROM_WORK_RAM_OFFSET_B;
     break;
 
-  case 0x2:
+  case 0x02:
     // cpuLog.warning(fmt::format("Instruction {} not implemented yet!",
     // this->currentInstruction)); sprintf(mnemonic, "CALL $%03X",
     // getNNN(instruction));
     break;
 
-  case 0x3:
+  case 0x03:
     // cpuLog.warning(fmt::format("Instruction {} not implemented yet!",
     // this->currentInstruction));
     //  sprintf(mnemonic, "SE V%X,#%02X", instruction.fields[0].nibble.low,
     //  instruction.fields[1].byte);
     break;
 
-  case 0x4:
+  case 0x04:
     // cpuLog.warning(fmt::format("Instruction {} not implemented yet!",
     // this->currentInstruction)); sprintf(mnemonic, "SNE V%X,#%02X",
     // instruction.fields[0].nibble.low, instruction.fields[1].byte);
     break;
 
-  case 0x5:
+  case 0x05:
     switch (this->decodedInstruction.fields[1].nibble.low)
     {
     case 0x00:

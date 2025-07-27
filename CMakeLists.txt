@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.18)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 project(chip8)
 
 set(CMAKE_CXX_STANDARD 23)
@@ -12,6 +14,8 @@ include(cmake/libfmt.cmake)
 # set(LIBS chip8_lib sfml-graphics sfml-window sfml-system)
 
 add_subdirectory(lib)
+
+add_subdirectory(test)
 # add_subdirectory(source)
 
 # add_executable(chip8_disassembler disassembler.cpp)

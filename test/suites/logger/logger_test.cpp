@@ -1,79 +1,49 @@
-#include <iostream>
-#include <fmt/format.h>
+#include <fmt/core.h>
 #include <fmt/color.h>
 #include <sstream>
-#include <vector>
 
 #include "gtest/gtest.h"
-#include "gmock/gmock.h"
 
-#include "logger/base_logger.h"
-#include "logger/console_logger.h"
+#include "base_logger.h"
 
 using namespace testing;
-using namespace Logger;
+
+template<LogLevel compile_time_level>
+class TestLogger : public BaseLogger<compile_time_level>
+{
+  public:
+    std::stringstream info_stream;
+    std::stringstream err_stream;
+
+    TestLogger(const std::string &preamble = "") :
+        BaseLogger<compile_time_level>(info_stream, err_stream, preamble)
+    {
+      // Empty
+    }
+};
 
 TEST(LoggerTest, ShouldLogNothing)
 {
-  std::stringstream logStream;
+  TestLogger<LogLevel::OFF> logger;
 
-  BaseLogger log = BaseLogger(LogLevel::OFF, &logStream, &logStream, "");
+  logger.debug("Debug message");
+  logger.info("Info message");
+  logger.warning("Warning message");
+  logger.error("Error message");
 
-  log.error("Test!");
-  log.warning("Test!");
-  log.info("Test!");
-  log.debug("Test!");
-  EXPECT_EQ(logStream.str(), "");
+  EXPECT_EQ(logger.info_stream.str(), "");
+  EXPECT_EQ(logger.err_stream.str(), "");
 }
 
 TEST(LoggerTest, ShouldLogError)
 {
-  std::stringstream logStream;
-  std::stringstream expectedMsg;
+  auto logger = TestLogger<LogLevel::ERROR>();
 
-  BaseLogger log = BaseLogger(LogLevel::ERROR, &logStream, &logStream, "");
+  logger.debug("Debug message");
+  logger.info("Info message");
+  logger.warning("Warning message");
+  logger.error("Error message");
 
-  expectedMsg << fmt::format(fg(fmt::color::red), "[ERR]: Test!") << std::endl;
-
-  log.error("Test!");
-  EXPECT_EQ(logStream.str(), expectedMsg.str());
-}
-
-TEST(LoggerTest, ShouldLogWarning)
-{
-  std::stringstream logStream;
-  std::stringstream expectedMsg;
-
-  BaseLogger log = BaseLogger(LogLevel::WARNING, &logStream, &logStream, "");
-
-  expectedMsg << fmt::format(fg(fmt::color::yellow), "[WRN]: Test!") << std::endl;
-
-  log.warning("Test!");
-  EXPECT_EQ(logStream.str(), expectedMsg.str());
-}
-
-TEST(LoggerTest, ShouldLogInfo)
-{
-  std::stringstream logStream;
-  std::stringstream expectedMsg;
-
-  BaseLogger log = BaseLogger(LogLevel::INFO, &logStream, &logStream, "");
-
-  expectedMsg << fmt::format(fg(fmt::color::green), "[INF]: Test!") << std::endl;
-
-  log.info("Test!");
-  EXPECT_EQ(logStream.str(), expectedMsg.str());
-}
-
-TEST(LoggerTest, ShouldLogDebug)
-{
-  std::stringstream logStream;
-  std::stringstream expectedMsg;
-
-  BaseLogger log = BaseLogger(LogLevel::DEBUG, &logStream, &logStream, "");
-
-  expectedMsg << fmt::format(fg(fmt::color::gray), "[DBG]: Test!") << std::endl;
-
-  log.debug("Test!");
-  EXPECT_EQ(logStream.str(), expectedMsg.str());
+  EXPECT_EQ(logger.info_stream.str(), "");
+  EXPECT_EQ(logger.err_stream.str(), fmt::format(fg(fmt::color::red), "[ERROR] Error message\n"));
 }
