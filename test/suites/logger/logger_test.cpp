@@ -1,6 +1,6 @@
 #include <fmt/core.h>
 #include <fmt/color.h>
-#include <sstream>
+#include <string>
 
 #include "gtest/gtest.h"
 
@@ -8,17 +8,27 @@
 
 using namespace testing;
 
-template<LogLevel compile_time_level>
-class TestLogger : public BaseLogger<compile_time_level>
+template<LogLevel log_level>
+class TestLogger : public BaseLogger<TestLogger<log_level>, log_level>
 {
   public:
-    std::stringstream info_stream;
-    std::stringstream err_stream;
+    std::string out;
+    std::string err;
 
-    TestLogger(const std::string &preamble = "") :
-        BaseLogger<compile_time_level>(info_stream, err_stream, preamble)
+    TestLogger(const std::string &preamble = {}) :
+        BaseLogger<TestLogger, log_level>(preamble)
     {
       // Empty
+    }
+
+    void standard_output(const std::string &message)
+    {
+      this->out += message;
+    }
+
+    void error_output(const std::string &message)
+    {
+      this->err += message;
     }
 };
 
@@ -31,8 +41,8 @@ TEST(LoggerTest, ShouldLogNothing)
   logger.warning("Warning message");
   logger.error("Error message");
 
-  EXPECT_EQ(logger.info_stream.str(), "");
-  EXPECT_EQ(logger.err_stream.str(), "");
+  EXPECT_EQ(logger.out, "");
+  EXPECT_EQ(logger.err, "");
 }
 
 TEST(LoggerTest, ShouldLogError)
@@ -44,6 +54,6 @@ TEST(LoggerTest, ShouldLogError)
   logger.warning("Warning message");
   logger.error("Error message");
 
-  EXPECT_EQ(logger.info_stream.str(), "");
-  EXPECT_EQ(logger.err_stream.str(), fmt::format(fg(fmt::color::red), "[ERROR] Error message\n"));
+  EXPECT_EQ(logger.out, "");
+  EXPECT_EQ(logger.err, fmt::format(fg(fmt::color::red), "[ERROR] Error message\n"));
 }
