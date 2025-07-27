@@ -1,0 +1,15 @@
+---
+AlignConsecutiveAssignments:
+  PadOperators: false
+  AlignCompound: true
+  AcrossComments: true
+AlignAfterOpenBracket: Align
+AlignArrayOfStructures: Left
+AlignConsecutiveBitFields:
+  Enabled: true
+AlignConsecutiveDeclarations:
+  Enabled: false
+AlignEscapedNewlines: Right
+BraceWrapping: {}
+SortIncludes: CaseSensitive
+BreakBeforeBraces: Allman
