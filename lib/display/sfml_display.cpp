@@ -1,16 +1,20 @@
 #include <algorithm>
-#include <thread>
 #include <fmt/format.h>
+#include <thread>
 
-#include "logger/console_logger.h"
 #include "display/sfml_display.h"
+#include "logger/console_logger.h"
 
-static Logger::ConsoleLogger sfmlDisplayLog(Logger::LogLevel::INFO, "sfml_display");
+static Logger::ConsoleLogger sfmlDisplayLog(Logger::LogLevel::INFO,
+                                            "sfml_display");
 
 namespace Display
 {
   SfmlDisplay::SfmlDisplay(Dimension_t nativeWidth, Dimension_t nativeHeight,
-                           Dimension_t emulatedWidth, Dimension_t emulatedHeight) : window(sf::RenderWindow(sf::VideoMode(nativeWidth, nativeHeight), "Chip8 - SFML"))
+                           Dimension_t emulatedWidth,
+                           Dimension_t emulatedHeight)
+      : window(sf::RenderWindow(sf::VideoMode(nativeWidth, nativeHeight),
+                                "Chip8 - SFML"))
   {
     this->nativeWidth = nativeWidth;
     this->nativeHeight = nativeHeight;
@@ -19,9 +23,11 @@ namespace Display
 
     try
     {
-      this->pixels = std::vector<SfmlDisplay::sfml_pixel_s>(this->emulatedWidth * this->emulatedHeight);
+      this->pixels = std::vector<SfmlDisplay::sfml_pixel_s>(
+          this->emulatedWidth * this->emulatedHeight);
 
-      sfmlDisplayLog.info(fmt::format("Initialized display with {} fake pixels", this->pixels.size()));
+      sfmlDisplayLog.info(fmt::format("Initialized display with {} fake pixels",
+                                      this->pixels.size()));
 
       for (auto i = 0; i < this->pixels.size(); i++)
       {
@@ -33,19 +39,22 @@ namespace Display
         auto yScale = this->nativeHeight / this->emulatedHeight;
 
         entry.isOn = false;
-        entry.shape = sf::RectangleShape(sf::Vector2f(1.0f * xScale, 1.0f * yScale));
+        entry.shape =
+            sf::RectangleShape(sf::Vector2f(1.0f * xScale, 1.0f * yScale));
 
         entry.shape.setPosition(sf::Vector2f(xCoord * xScale, yCoord * yScale));
 
-        sfmlDisplayLog.debug(fmt::format("Initialized pixel {} at coords [{}, {}]", i, entry.shape.getPosition().x,
-                                                                                      entry.shape.getPosition().y));
+        sfmlDisplayLog.debug(fmt::format(
+            "Initialized pixel {} at coords [{}, {}]", i,
+            entry.shape.getPosition().x, entry.shape.getPosition().y));
       }
 
       this->isOpen = true;
     }
     catch (const std::exception &e)
     {
-      sfmlDisplayLog.error(fmt::format("Failed to initialize fake pixel array: {}", e.what()));
+      sfmlDisplayLog.error(
+          fmt::format("Failed to initialize fake pixel array: {}", e.what()));
       throw e;
     }
   }
@@ -92,8 +101,9 @@ namespace Display
 
     p.isOn = true;
 
-    sfmlDisplayLog.info(fmt::format("Pixel[{}, {}] @ [{}, {}] is ON", x, y, p.shape.getPosition().x,
-                         p.shape.getPosition().y));
+    sfmlDisplayLog.info(fmt::format("Pixel[{}, {}] @ [{}, {}] is ON", x, y,
+                                    p.shape.getPosition().x,
+                                    p.shape.getPosition().y));
   }
 
   void SfmlDisplay::clearPixel(Coordinate_t x, Coordinate_t y)
@@ -105,8 +115,9 @@ namespace Display
 
     p.isOn = false;
 
-    sfmlDisplayLog.info(fmt::format("Pixel[{}, {}] @ [{}, {}] is OFF", x, y, p.shape.getPosition().x,
-                         p.shape.getPosition().y));
+    sfmlDisplayLog.info(fmt::format("Pixel[{}, {}] @ [{}, {}] is OFF", x, y,
+                                    p.shape.getPosition().x,
+                                    p.shape.getPosition().y));
   }
 
   bool SfmlDisplay::getPixelState(Coordinate_t x, Coordinate_t y)
@@ -118,4 +129,4 @@ namespace Display
 
     return p.isOn;
   }
-}
+} // namespace Display

@@ -13,3 +13,4 @@ AlignEscapedNewlines: Right
 BraceWrapping: {}
 SortIncludes: CaseSensitive
 BreakBeforeBraces: Allman
+NamespaceIndentation: All
