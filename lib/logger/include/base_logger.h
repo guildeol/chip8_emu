@@ -1,7 +1,6 @@
 #pragma once
 
-#include <fmt/color.h>
-#include <fmt/format.h>
+#include <cstdio>
 #include <string_view>
 
 enum class LogLevel
@@ -13,10 +12,9 @@ enum class LogLevel
   DEBUG,
 };
 
-template <class Derived, LogLevel compile_time_level>
+template <LogLevel compile_time_level>
 class BaseLogger
 {
-  private:
     const std::string preamble;
 
     BaseLogger();
@@ -37,69 +35,72 @@ class BaseLogger
     }
 
     template <typename... Args>
-    void log(LogLevel p_level, const fmt::color p_color, const fmt::format_string<Args...> p_fmt_msg, Args &&...p_args)
+    void log(LogLevel p_level, const char *p_fmt_msg, Args &&...p_args)
     {
-      auto log_line = fmt::format(p_fmt_msg, std::forward<Args>(p_args)...);
-
-      auto message = (preamble.empty()) ?
-        fmt::format(fg(p_color), "[{}] {}\n", level_to_string(p_level), log_line) :
-        fmt::format(fg(p_color), "[{}][{}] {}\n", this->preamble, level_to_string(p_level), log_line);
-
-      if (p_level == LogLevel::ERROR || p_level == LogLevel::WARNING)
+      std::array<char, 256> message;
+      if (this->preamble.empty())
       {
-        auto &derived = static_cast<Derived &>(*this);
-
-        derived.error_output(message);
+        snprintf(message.data(), message.size(), "[%s] %s\n", level_to_string(p_level), p_fmt_msg, std::forward<Args>(p_args)...);
       }
       else
       {
-        auto &derived = static_cast<Derived &>(*this);
+        snprintf(message.data(), message.size(), "[%s][%s] %s\n", this->preamble.c_str(), level_to_string(p_level), p_fmt_msg,
+                 std::forward<Args>(p_args)...);
+      }
 
-        derived.error_output(message);
+      if (p_level == LogLevel::ERROR || p_level == LogLevel::WARNING)
+      {
+        this->error_output(message.data());
+      }
+      else
+      {
+        this->standard_output(message.data());
       }
     }
 
+    virtual void error_output(const std::string_view message) = 0;
+    virtual void standard_output(const std::string_view message) = 0;
+
   protected:
-    BaseLogger(const std::string &preamble = "")
-        : preamble(preamble)
+    BaseLogger(const std::string &preamble = "") : preamble(preamble)
     {
       // Empty
     }
 
   public:
     template <typename... Args>
-    void error(const fmt::format_string<Args...> p_fmt_msg, Args &&...p_args)
+    void error(const char *p_fmt_msg, Args &&...p_args)
     {
       if constexpr (compile_time_level >= LogLevel::ERROR)
       {
-        log(LogLevel::ERROR, fmt::color::red, p_fmt_msg, std::forward<Args>(p_args)...);
+        log(LogLevel::ERROR, p_fmt_msg, std::forward<Args>(p_args)...);
       }
     }
 
     template <typename... Args>
-    void warning(const fmt::format_string<Args...> p_fmt_msg, Args &&...p_args)
+    void warning(const char *p_fmt_msg, Args &&...p_args)
     {
       if constexpr (compile_time_level >= LogLevel::WARNING)
       {
-        log(LogLevel::WARNING, fmt::color::yellow, p_fmt_msg, std::forward<Args>(p_args)...);
+        log(LogLevel::WARNING, p_fmt_msg, std::forward<Args>(p_args)...);
       }
     }
 
     template <typename... Args>
-    void info(const fmt::format_string<Args...> p_fmt_msg, Args &&...p_args)
+    void info(const char *p_fmt_msg, Args &&...p_args)
     {
       if constexpr (compile_time_level >= LogLevel::INFO)
       {
-        log(LogLevel::INFO, fmt::color::blue, p_fmt_msg, std::forward<Args>(p_args)...);
+        log(LogLevel::INFO, p_fmt_msg, std::forward<Args>(p_args)...);
       }
     }
 
     template <typename... Args>
-    void debug(const fmt::format_string<Args...> p_fmt_msg, Args &&...p_args)
+    void debug(const char *p_fmt_msg, Args &&...p_args)
     {
       if constexpr (compile_time_level >= LogLevel::DEBUG)
       {
-        log(LogLevel::DEBUG, fmt::color::green, p_fmt_msg, std::forward<Args>(p_args)...);
+        log(LogLevel::DEBUG, p_fmt_msg, std::forward<Args>(p_args)...);
       }
     }
 };
