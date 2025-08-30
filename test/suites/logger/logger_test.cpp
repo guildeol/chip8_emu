@@ -1,5 +1,3 @@
-#include <fmt/core.h>
-#include <fmt/color.h>
 #include <string>
 
 #include "gtest/gtest.h"
@@ -8,28 +6,21 @@
 
 using namespace testing;
 
-template<LogLevel log_level>
+template <LogLevel log_level>
 class TestLogger : public BaseLogger<log_level>
 {
   public:
-    std::string out;
-    std::string err;
+    std::string out; // NOLINT(misc-non-private-member-variables-in-classes)
+    std::string err; // NOLINT(misc-non-private-member-variables-in-classes)
 
-    TestLogger(const std::string &preamble = {}) :
-        BaseLogger<log_level>(preamble)
+    TestLogger(const std::string &preamble = {}) : BaseLogger<log_level>(preamble)
     {
       // Empty
     }
 
-    void standard_output(const std::string_view message)
-    {
-      this->out += message;
-    }
+    void standard_output(const std::string_view message) override { this->out += message; }
 
-    void error_output(const std::string_view message)
-    {
-      this->err += message;
-    }
+    void error_output(const std::string_view message) override { this->err += message; }
 };
 
 TEST(LoggerTest, ShouldLogNothing)
@@ -109,3 +100,4 @@ TEST(LoggerTest, ShouldLogWithPreamble)
   EXPECT_EQ(logger.out, "[TestPreamble][DEBUG] Debug message\n[TestPreamble][INFO] Info message\n");
   EXPECT_EQ(logger.err, "[TestPreamble][WARNING] Warning message\n[TestPreamble][ERROR] Error message\n");
 }
+
